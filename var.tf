@@ -1,7 +1,7 @@
 variable "AWS_ACCESS_KEY" {}
 variable "AWS_SECRET_KEY" {}
 
-variable "AWS_REGION" {
+variable "MY_AWS_REGION" {
   default = "us-east-1"
 }
 
@@ -16,3 +16,5 @@ variable "AMIS" {
 variable "MY_PUBLIC_KEY" {
   default = "mykey.pub"
 }
+
+data "aws_caller_identity" "current" {}

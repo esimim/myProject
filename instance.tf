@@ -1,6 +1,6 @@
 resource "aws_instance" "myProject-Ec2" {
-  ami           = lookup(var.AMIS, var.AWS_REGION)
-  #ami           = var.AMIS[var.AWS_REGION]
+  ami           = lookup(var.AMIS, var.MY_AWS_REGION)
+  #ami           = var.AMIS[var.MY_AWS_REGION]
   instance_type = "t2.micro"
 
   # the VPC subnet

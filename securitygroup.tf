@@ -25,3 +25,27 @@ resource "aws_security_group_rule" "allowSSH" {
   cidr_blocks       = ["0.0.0.0/0"]
   security_group_id = aws_security_group.allowIn.id
 }
+
+resource "aws_security_group_rule" "allowegress" {
+  type              = "egress"
+  from_port         = 0
+  to_port           = 0
+  protocol          = "-1"
+  cidr_blocks       = ["0.0.0.0/0"]
+  security_group_id = aws_security_group.allowIn.id
+}
+
+resource "aws_security_group" "es" {
+  name = "myprojectes-sg"
+  description = "Allow inbound traffic to ElasticSearch from VPC CIDR"
+  vpc_id = aws_vpc.myProject.id
+
+  ingress {
+      from_port = 0
+      to_port = 0
+      protocol = "-1"
+      cidr_blocks = [
+          aws_vpc.myProject.cidr_block
+      ]
+  }
+}
