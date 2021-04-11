@@ -8,6 +8,9 @@ packer validate myprojectImageBuild.pkr.hcl
 packer build myprojectImageBuild.pkr.hcl
 
 2) Fazer o provisionamento do ElasticSearch e da EC2 
+
 terraform validate
+
 terraform plan -out out.terraform
+
 terraform apply out.terraform
