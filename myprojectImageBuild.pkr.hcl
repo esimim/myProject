@@ -56,12 +56,4 @@ build {
       "sudo systemctl start httpd"
     ]
   }
-
-  provisioner "shell-local" {
-    inline = ["echo foo"]
-  }
-
-
-
 }
-

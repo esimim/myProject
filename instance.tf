@@ -21,9 +21,6 @@ resource "aws_instance" "myProject-Ec2" {
     #command = "sed 's/MYPROJECTKIBANAADDRESS/${aws_elasticsearch_domain.es-myproject.endpoint}/g' filebeat > filebeat.yml"
     command = "sed 's/${var.kibanaaddressfield}/${aws_elasticsearch_domain.es-myproject.endpoint}/g' filebeatTemp > filebeat.yml"
   }
-
-
-
 }
 
 output "ip" {
