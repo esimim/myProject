@@ -25,11 +25,11 @@ mysource_ami = "ami-xxxx"
 ### 1) Gerar uma imagem (AWS AMI) com o software de monitoramento já provisionado utilizando o Packer
 
 ```bash 
-packer validate -var="myvpc_id=vpc-xxxx" -var="mysubnet_id=vpc-xxxx" -var="mysource_ami=ami-xxxx" myprojectImageBuild.pkr.hcl
+packer validate -var-file="variables.pkrvars.hcl" myprojectImageBuild.pkr.hcl
 ```
 
 ```bash
-packer build -var="myvpc_id=vpc-xxxx" -var="mysubnet_id=vpc-xxxx" -var="mysource_ami=ami-xxxx" myprojectImageBuild.pkr.hcl
+packer build -var-file="variables.pkrvars.hcl" myprojectImageBuild.pkr.hcl
 ```
 
 ### 2) Fazer o provisionamento do ElasticSearch e da EC2 
