@@ -3,7 +3,7 @@ Criar um cluster Amazon Elasticsearch Service com uma instância EC2 enviando Be
 
 ## Como Instalar
 
-Pre-requisitos: terraform.tfvars e variables.pkrvars.hcl com variáveis AWS
+Pre-requisitos: criar arquivos terraform.tfvars e variables.pkrvars.hcl com variáveis AWS
 
 terraform.tfvars
 
