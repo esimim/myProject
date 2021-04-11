@@ -14,29 +14,16 @@ resource "aws_instance" "myProject-Ec2" {
 
   provisioner "local-exec" {
     #command = "sed 's/MYPROJECTELASTICSEARCHADDRESS/${aws_elasticsearch_domain.es-myproject.endpoint}/g' filebeat > filebeat.yml"
-    command = "sed 's/$SEARCH/$REPLACE/g' filebeat > filebeatTemp"
-
-    environment = {
-      SEARCH = "MYPROJECTELASTICSEARCHADDRESS"
-      REPLACE = aws_elasticsearch_domain.es-myproject.endpoint
-    }
+    command = "sed 's/${var.elasticaddressfield}/${aws_elasticsearch_domain.es-myproject.endpoint}/g' filebeat > filebeatTemp"
   }
 
   provisioner "local-exec" {
     #command = "sed 's/MYPROJECTKIBANAADDRESS/${aws_elasticsearch_domain.es-myproject.endpoint}/g' filebeat > filebeat.yml"
-    command = "sed 's/$SEARCH/$REPLACE/g' filebeatTemp > filebeat.yml"
-
-    environment = {
-      SEARCH = "MYPROJECTKIBANAADDRESS"
-      REPLACE = aws_elasticsearch_domain.es-myproject.kibana_endpoint
-    }
+    command = "sed 's/${var.kibanaaddressfield}/${aws_elasticsearch_domain.es-myproject.endpoint}/g' filebeatTemp > filebeat.yml"
   }
 
-  # copies the filebeat.yml to /etc/filebeat/filebeat.yml
-  provisioner "file" {
-    destination = "/etc/filebeat/filebeat.yml"
-    source      = "./filebeat.yml"
-  }
+
+
 }
 
 output "ip" {

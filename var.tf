@@ -1,8 +1,17 @@
 variable "AWS_ACCESS_KEY" {}
 variable "AWS_SECRET_KEY" {}
+variable "mypassword" {}
 
 variable "MY_AWS_REGION" {
   default = "us-east-1"
+}
+
+variable "elasticaddressfield" {
+  default = "MYPROJECTELASTICSEARCHADDRESS"
+}
+
+variable "kibanaaddressfield" {
+  default = "MYPROJECTKIBANAADDRESS"
 }
 
 variable "AMIS" {
