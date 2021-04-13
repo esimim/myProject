@@ -26,6 +26,7 @@ $ vi variables.pkrvars.hcl
 myvpc_id     = "vpc-xxxx"
 mysubnet_id  = "subnet-xxxx"
 mysource_ami = "ami-xxxx"
+
 $ cd ../packer/
 $ packer validate -var-file="variables.pkrvars.hcl" myprojectImageBuild.pkr.hcl
 $ AWS_PROFILE=myterraformagent packer build -var-file="variables.pkrvars.hcl" myprojectImageBuild.pkr.hcl
