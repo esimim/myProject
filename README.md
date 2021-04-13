@@ -16,6 +16,7 @@ mysource_ami = "ami-xxxx"
 
 ```bash
 cd elasticsearch/
+terraform init
 terraform validate
 AWS_PROFILE=myterraformagent terraform plan -out out.terraform
 AWS_PROFILE=myterraformagent terraform apply out.terraform
@@ -31,6 +32,7 @@ AWS_PROFILE=myterraformagent packer build -var-file="variables.pkrvars.hcl" mypr
 
 ```bash
 cd ../ec2/
+terraform init
 terraform validate
 AWS_PROFILE=myterraformagent terraform plan -out out.terraform
 AWS_PROFILE=myterraformagent terraform apply out.terraform
