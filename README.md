@@ -3,16 +3,7 @@ Criar um cluster Amazon Elasticsearch Service com uma instância EC2 enviando Be
 
 ## Como Instalar
 
-Pre-requisitos: criar arquivos terraform.tfvars e variables.pkrvars.hcl com variáveis AWS
-
-terraform.tfvars
-
-```bash
-AWS_ACCESS_KEY = "xxxx"
-AWS_SECRET_KEY = "xxxx"
-MY_PUBLIC_KEY = "~/.ssh/id_rsa.pub"
-mysshpassword = "xxxx"
-```
+Pre-requisitos: ter vpc e subnet padrão na conta AWS ou especificar os valores abaixo ao criar AMI
 
 variables.pkrvars.hcl
 
@@ -21,27 +12,26 @@ myvpc_id     = "vpc-xxxx"
 mysubnet_id  = "subnet-xxxx"
 mysource_ami = "ami-xxxx"
 ```
-
-### 1) Gerar uma imagem (AWS AMI) com o software de monitoramento já provisionado utilizando o Packer
-
-```bash 
-packer validate -var-file="variables.pkrvars.hcl" myprojectImageBuild.pkr.hcl
-```
+### 1) Criar um cluster ElasticSearch Service alta disponibilidade
 
 ```bash
-packer build -var-file="variables.pkrvars.hcl" myprojectImageBuild.pkr.hcl
-```
-
-### 2) Fazer o provisionamento do ElasticSearch e da EC2 
-
-```bash
+cd elasticsearch/
 terraform validate
+AWS_PROFILE=myterraformagent terraform plan -out out.terraform
+AWS_PROFILE=myterraformagent terraform apply out.terraform
 ```
 
-```bash
-terraform plan -out out.terraform
-```
+### 2) Criar uma imagem com o software de monitoramento já provisionado inclusive com o arquivo de configuração já definido para o cluster ElasticSearch criado anteriormente
+
+cd ../packer/
+packer validate -var-file="variables.pkrvars.hcl" myprojectImageBuild.pkr.hcl
+AWS_PROFILE=myterraformagent packer build -var-file="variables.pkrvars.hcl" myprojectImageBuild.pkr.hcl
+
+### 3) Fazer o provisionamento do EC2 na VPC numa subnet com acesso público
 
 ```bash
-terraform apply out.terraform
+cd ../ec2/
+terraform validate
+AWS_PROFILE=myterraformagent terraform plan -out out.terraform
+AWS_PROFILE=myterraformagent terraform apply out.terraform
 ```
