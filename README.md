@@ -10,11 +10,11 @@ Pre-requisitos: ter vpc e subnet padrão na conta AWS ou especificar os valores 
 ### 1) Criar um cluster ElasticSearch Service alta disponibilidade
 
 ```bash
-cd elasticsearch/
-terraform init
-terraform validate
-AWS_PROFILE=myterraformagent terraform plan -out out.terraform
-AWS_PROFILE=myterraformagent terraform apply out.terraform
+$ cd elasticsearch/
+$ terraform init
+$ terraform validate
+$ AWS_PROFILE=myterraformagent terraform plan -out out.terraform
+$ AWS_PROFILE=myterraformagent terraform apply out.terraform
 ```
 
 ### 2) Criar uma imagem AMI com o software de monitoramento já provisionado e configurado
