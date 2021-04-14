@@ -1,5 +1,5 @@
 # AWS ElasticSearch Service + EC2 = Terraform + Packer
-Criar um cluster Amazon Elasticsearch Service de alta disponibilidade e em seguida criar uma instância EC2 monitorada via Beats já configurada para enviar os dados para o cluster ElasticSearch. Com a imagem já provisionada e configurada o tempo de criação da instãncia fica ainda menor.
+Criar um cluster Amazon Elasticsearch Service de alta disponibilidade e em seguida criar uma instância EC2 monitorada via Beats já configurada para enviar os dados para o cluster ElasticSearch. Com a imagem já provisionada e configurada o tempo de criação da instância fica ainda menor.
 
 ## Como Instalar
 
