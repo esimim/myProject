@@ -9,6 +9,16 @@ locals {
   }
 }
 
+terraform {
+  backend "s3" {
+    bucket         = "terraform-state-myproject"
+    key            = "elasticsearch/terraform.tfstate"
+    region         = "us-east-1"
+    dynamodb_table = "terraform-locks-myproject"
+    encrypt        = true
+  }
+}
+
 data "aws_region" "current" {}
 
 # Internet VPC

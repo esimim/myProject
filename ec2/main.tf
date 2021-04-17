@@ -1,11 +1,3 @@
-data "terraform_remote_state" "elasticsearch" {
-  backend = "local"
-
-  config = {
-    path = "../elasticsearch/terraform.tfstate"
-  }
-}
-
 data "aws_ami" "myproject_beats_ami" {
   most_recent = true
 
@@ -27,6 +19,16 @@ data "aws_vpc" "myproject" {
   filter {
      name = "tag:Name"
      values = ["myproject-vpc"]
+  }
+}
+
+terraform {
+  backend "s3" {
+    bucket         = "terraform-state-myproject"
+    key            = "ec2/terraform.tfstate"
+    region         = "us-east-1"
+    dynamodb_table = "terraform-locks-myproject"
+    encrypt        = true
   }
 }
 
