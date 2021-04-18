@@ -9,6 +9,7 @@ locals {
   }
 }
 
+# defines the s3 backend
 terraform {
   backend "s3" {
     bucket         = "terraform-state-myproject"
