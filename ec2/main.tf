@@ -111,7 +111,4 @@ resource "aws_instance" "myproject_ec2" {
   # the public SSH key
   key_name = aws_key_pair.myproject_key.key_name
 
-  iam_instance_profile = aws_iam_instance_profile.myproject_ec2_profile.name
-
 }
-
