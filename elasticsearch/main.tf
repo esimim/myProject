@@ -160,10 +160,10 @@ POLICY
   }
 
   provisioner "local-exec" {
-    command = "sed 's/${var.elasticaddressfield}/${aws_elasticsearch_domain.myproject_elastic.endpoint}/g' filebeat > filebeatTemp"
+    command = "sed 's/${var.elasticaddressfield}/${aws_elasticsearch_domain.myproject_es.endpoint}/g' filebeat > filebeatTemp"
   }
 
   provisioner "local-exec" {
-    command = "sed 's/${var.kibanaaddressfield}/${aws_elasticsearch_domain.myproject_elastic.endpoint}/g' filebeatTemp > ../packer/filebeat.yml"
+    command = "sed 's/${var.kibanaaddressfield}/${aws_elasticsearch_domain.myproject_es.endpoint}/g' filebeatTemp > ../packer/filebeat.yml"
   }
 }
