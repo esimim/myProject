@@ -151,7 +151,6 @@ resource "aws_elasticsearch_domain" "myproject_es" {
 }
 POLICY
 
-
   snapshot_options {
       automated_snapshot_start_hour = 23
   }
