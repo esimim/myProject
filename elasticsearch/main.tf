@@ -105,12 +105,12 @@ resource "aws_security_group" "es" {
   }
 }
 
-resource "aws_iam_service_linked_role" "myproject_elastic" {
+resource "aws_iam_service_linked_role" "myproject_es" {
   aws_service_name = "es.amazonaws.com"
 }
 
-resource "aws_elasticsearch_domain" "myproject_elastic" {
-  domain_name = "myproject-elastic"
+resource "aws_elasticsearch_domain" "myproject_es" {
+  domain_name = "myproject-es"
   elasticsearch_version = "7.9"
 
   cluster_config {
@@ -142,7 +142,7 @@ resource "aws_elasticsearch_domain" "myproject_elastic" {
       "Action": "es:*",
       "Principal": "*",
       "Effect": "Allow",
-      "Resource": "arn:aws:es:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:domain/${var.domain}/*",
+      "Resource": "arn:aws:es:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:domain/myproject-es/*",
       "Condition": {
         "IpAddress": {"aws:SourceIp": ["66.193.100.22/32"]}
       }
