@@ -134,22 +134,19 @@ resource "aws_elasticsearch_domain" "myproject_es" {
       ebs_enabled = true
       volume_size = 10
   }
-  access_policies = <<POLICY
+  access_policies = <<CONFIG
 {
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Action": "es:*",
-      "Principal": "*",
-      "Effect": "Allow",
-      "Resource": "arn:aws:es:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:domain/myproject-es/*",
-      "Condition": {
-        "IpAddress": {"aws:SourceIp": ["66.193.100.22/32"]}
-      }
-    }
-  ]
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Action": "es:*",
+            "Principal": "*",
+            "Effect": "Allow",
+            "Resource": "arn:aws:es:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:domain/${var.domain}/*"
+        }
+    ]
 }
-POLICY
+CONFIG
 
   snapshot_options {
       automated_snapshot_start_hour = 23
