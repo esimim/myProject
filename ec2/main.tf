@@ -25,6 +25,11 @@ data "aws_vpc" "myproject" {
   }
 }
 
+# get the aws_iam_role for configuring ec2
+data "aws_iam_role" "get_post_config_role" {
+  name = "get-post-config-role"
+}
+
 # defines the s3 backend
 terraform {
   backend "s3" {
@@ -83,6 +88,13 @@ resource "aws_key_pair" "myproject_key" {
   public_key = file(var.MY_PUBLIC_KEY)
 }
 
+# 
+resource "aws_iam_instance_profile" "myproject_ec2_profile" {
+  name = "myproject-ec2-profile"
+  role = data.aws_iam_role.get_post_config_role.name
+  #role = date.aws_iam_role.role.name
+}
+
 # create ec2 instance
 resource "aws_instance" "myproject_ec2" {
   ami            = data.aws_ami.myproject_beats_ami.id
@@ -99,4 +111,7 @@ resource "aws_instance" "myproject_ec2" {
   # the public SSH key
   key_name = aws_key_pair.myproject_key.key_name
 
+  iam_instance_profile = aws_iam_instance_profile.myproject_ec2_profile.name
+
 }
+

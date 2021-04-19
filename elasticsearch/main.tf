@@ -5,7 +5,7 @@ locals {
 
   tags = {
     Project     = local.name
-    #Environment = local.env #not yet implemented
+    Environment = terraform.workspace
   }
 }
 
@@ -58,11 +58,10 @@ resource "aws_route_table" "myproject_public" {
 
 # Public Subnets
 resource "aws_subnet" "myproject_public" {
-  count                   = length(local.azs)
+  count                   = terraform.workspace == "default" ? length(local.azs) : 1
   vpc_id                  = aws_vpc.myproject.id
   availability_zone       = local.azs[count.index]
   cidr_block              = cidrsubnet(aws_vpc.myproject.cidr_block, 8, count.index)
-  #cidr_block              = local.public_subnet_cidr_blocks[count.index]
   map_public_ip_on_launch = "true"
 
   tags = merge(local.tags, {
@@ -73,18 +72,17 @@ resource "aws_subnet" "myproject_public" {
 
 # route association public
 resource "aws_route_table_association" "myproject_public" {
-  count          = length(local.azs)
+  count          = terraform.workspace == "default" ? length(local.azs) : 1
   subnet_id      = aws_subnet.myproject_public[count.index].id
   route_table_id = aws_route_table.myproject_public.id
 }
 
 # Private Subnets
 resource "aws_subnet" "myproject_private" {
-  count             = length(local.azs)
+  count             = terraform.workspace == "default" ? length(local.azs) : 1
   vpc_id            = aws_vpc.myproject.id
   availability_zone = local.azs[count.index]
   cidr_block        = cidrsubnet(aws_vpc.myproject.cidr_block, 8, count.index + length(local.azs))
-  #cidr_block        = local.private_subnet_cidr_blocks[count.index]
 
   tags = merge(local.tags, {
     Name = "${local.name}-private"
@@ -121,18 +119,12 @@ resource "aws_elasticsearch_domain" "myproject_es" {
       zone_awareness_enabled = true
 
       zone_awareness_config {
-        availability_zone_count = 3
+        availability_zone_count = terraform.workspace == "default" ? length(local.azs) : 1
       }
   }
 
   vpc_options {
       subnet_ids = aws_subnet.myproject_private[*].id
-      #subnet_ids = [
-      #  aws_subnet.myProject-private.id,
-      #  aws_subnet.myProject-private1.id,
-      #  aws_subnet.myProject-private2.id
-      #]
-
       security_group_ids = [
           aws_security_group.es.id
       ]
@@ -142,20 +134,8 @@ resource "aws_elasticsearch_domain" "myproject_es" {
       ebs_enabled = true
       volume_size = 10
   }
+  access_policies = file("access-to-myproject-es.json")
 
-  access_policies = <<CONFIG
-{
-  "Version": "2012-10-17",
-  "Statement": [
-      {
-          "Action": "es:*",
-          "Principal": "*",
-          "Effect": "Allow",
-          "Resource": "arn:aws:es:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:domain/myproject-es/*"
-      }
-  ]
-}
-  CONFIG
 
   snapshot_options {
       automated_snapshot_start_hour = 23
@@ -166,14 +146,40 @@ resource "aws_elasticsearch_domain" "myproject_es" {
   }
 
   provisioner "local-exec" {
-    #command = "sed 's/MYPROJECTELASTICSEARCHADDRESS/${aws_elasticsearch_domain.es-myproject.endpoint}/g' filebeat > filebeat.yml"
     command = "sed 's/${var.elasticaddressfield}/${aws_elasticsearch_domain.myproject_es.endpoint}/g' filebeat > filebeatTemp"
   }
 
   provisioner "local-exec" {
-    #command = "sed 's/MYPROJECTKIBANAADDRESS/${aws_elasticsearch_domain.es-myproject.endpoint}/g' filebeat > filebeat.yml"
     command = "sed 's/${var.kibanaaddressfield}/${aws_elasticsearch_domain.myproject_es.endpoint}/g' filebeatTemp > ../packer/filebeat.yml"
   }
 }
 
+resource "aws_iam_role" "get_post_config_role" {
+  name = "get-post-config-role"
 
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = "sts:AssumeRole"
+        Effect = "Allow"
+        Sid    = ""
+        Principal = {
+          Service = "ec2.amazonaws.com"
+        }
+      },
+    ]
+  })
+
+  tags = merge(local.tags, {
+    Name = "${local.name}-es-access-role"
+  })
+}
+
+resource "aws_iam_role_policy" "get_post_config_policy" {
+  name = "get-post-config-policy"
+  role = aws_iam_role.get_post_config_role.id
+
+  # ElasticSearch get-post-config-policy file
+  policy = file("access-to-myproject-es.json")
+}
