@@ -156,8 +156,6 @@ CONFIG
       Domain = "myproject-es"
   }
 
-  depends_on = [aws_iam_service_linked_role.myproject_es]
-
   provisioner "local-exec" {
     command = "sed 's/${var.elasticaddressfield}/${aws_elasticsearch_domain.myproject_es.endpoint}/g' filebeat > filebeatTemp"
   }
