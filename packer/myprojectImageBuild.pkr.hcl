@@ -27,7 +27,7 @@ locals { timestamp = regex_replace(timestamp(), "[- TZ:]", "") }
 source "amazon-ebs" "myproject-image" {
   ami_name      = "myproject-beats-ami-${local.timestamp}"
   instance_type = "t2.micro"
-  region        = "us-east-1"
+  region        = "us-west-2"
   ssh_username = "ec2-user"
   source_ami = "${var.mysource_ami}"
   vpc_id = "${var.myvpc_id}"

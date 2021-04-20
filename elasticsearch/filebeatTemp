@@ -177,7 +177,7 @@ setup.kibana:
 # ---------------------------- Elasticsearch Output ----------------------------
 output.elasticsearch:
   # Array of hosts to connect to.
-  hosts: ["vpc-myproject-es-v76ugjpx57otcwd25qi6ygf4iy.us-east-1.es.amazonaws.com:443"]
+  hosts: ["vpc-myprojectelk-klfcrsvjfzszulvey4wjgyrfhe.us-west-2.es.amazonaws.com:443"]
 
   # Protocol - either `http` (default) or `https`.
   protocol: "https"

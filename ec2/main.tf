@@ -10,40 +10,35 @@ data "aws_ami" "myproject_beats_ami" {
 }
 
 # get the us-east-1a public subnet
-data "aws_subnet" "myproject_public" {
+data "aws_subnet" "myprojectelk_public" {
   filter {
     name = "tag:Public"
-    values = ["public-us-east-1a"]
+    values = ["public-us-west-2a"]
   }
 }
 
 # get the 'myproject-vpc' vpc that this project uses
-data "aws_vpc" "myproject" {
+data "aws_vpc" "myprojectelk" {
   filter {
      name = "tag:Name"
-     values = ["myproject-vpc"]
+     values = ["myprojectelk-vpc"]
   }
-}
-
-# get the aws_iam_role for configuring ec2
-data "aws_iam_role" "get_post_config_role" {
-  name = "get-post-config-role"
 }
 
 # defines the s3 backend
 terraform {
   backend "s3" {
-    bucket         = "terraform-state-myproject"
+    bucket         = "terraform-state-myprojectelk"
     key            = "ec2/terraform.tfstate"
-    region         = "us-east-1"
-    dynamodb_table = "terraform-locks-myproject"
+    region         = "us-west-2"
+    dynamodb_table = "terraform-locks-myprojectelk"
     encrypt        = true
   }
 }
 
 # ec2 security group
 resource "aws_security_group" "allow_in" {
-  vpc_id      = data.aws_vpc.myproject.id
+  vpc_id      = data.aws_vpc.myprojectelk.id
   name        = "allow-ssh"
   description = "security group that allows ssh and all egress traffic"
 
@@ -83,32 +78,30 @@ resource "aws_security_group_rule" "allowegress" {
 }
 
 # ec2 public key: allow ssh access
-resource "aws_key_pair" "myproject_key" {
-  key_name   = "myproject-key"
+resource "aws_key_pair" "myprojectelk_key" {
+  key_name   = "myprojectelk-key"
   public_key = file(var.MY_PUBLIC_KEY)
 }
 
 # 
-resource "aws_iam_instance_profile" "myproject_ec2_profile" {
-  name = "myproject-ec2-profile"
-  role = data.aws_iam_role.get_post_config_role.name
+#resource "aws_iam_instance_profile" "myproject_ec2_profile" {
+#  name = "myproject-ec2-profile"
+#  role = data.aws_iam_role.get_post_config_role.name
   #role = date.aws_iam_role.role.name
-}
+#}
 
 # create ec2 instance
 resource "aws_instance" "myproject_ec2" {
   ami            = data.aws_ami.myproject_beats_ami.id
-  #ami           = lookup(var.AMIS, var.MY_AWS_REGION)
-  #ami           = var.AMIS[var.MY_AWS_REGION]
   instance_type = "t2.micro"
 
   # the VPC subnet
-  subnet_id = data.aws_subnet.myproject_public.id
+  subnet_id = data.aws_subnet.myprojectelk_public.id
 
   # the security group
   vpc_security_group_ids = [aws_security_group.allow_in.id]
 
   # the public SSH key
-  key_name = aws_key_pair.myproject_key.key_name
+  key_name = aws_key_pair.myprojectelk_key.key_name
 
 }

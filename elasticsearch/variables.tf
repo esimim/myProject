@@ -7,8 +7,7 @@ variable "kibanaaddressfield" {
 }
 
 variable "MY_AWS_REGION" {
-  default = "us-east-1"
+  default = "us-west-2"
 }
 
 data "aws_caller_identity" "current" {}
-
